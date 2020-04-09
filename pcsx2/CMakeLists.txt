@@ -1117,10 +1117,15 @@ set(pcsx2LinuxSources
 set(pcsx2OSXSources
 	CDVD/Linux/DriveUtility.cpp
 	CDVD/Linux/IOCtlSrc.cpp
+	GS/Window/GSWndCGL.mm
 	Linux/LnxConsolePipe.cpp
 #	Linux/LnxKeyCodes.cpp
 	Darwin/DarwinFlatFileReader.cpp
 	)
+
+set(pcsx2OSXHeaders
+	GS/Window/GSWndCGL.h
+	GS/Window/GSWndCGLShim.h)
 
 set(pcsx2FreeBSDSources
 	CDVD/Linux/DriveUtility.cpp
@@ -1409,13 +1414,13 @@ endif()
 if(APPLE)
 	target_sources(PCSX2 PRIVATE
 		${pcsx2OSXSources}
-		${pcsx2LinuxHeaders}
+		${pcsx2OSXHeaders}
 		${pcsx2USBNullSources}
 		${pcsx2USBNullHeaders})
-else()
-	target_sources(PCSX2 PRIVATE
-		${pcsx2USBSources}
-		${pcsx2USBHeaders})
+
+	find_library(APPKIT_LIBRARY AppKit)
+	target_compile_options(PCSX2 PRIVATE -fobjc-arc)
+	target_link_libraries(PCSX2 PRIVATE ${APPKIT_LIBRARY} -fobjc-link-runtime)
 endif()
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD" OR ${CMAKE_SYSTEM_NAME} MATCHES "NetBSD")
