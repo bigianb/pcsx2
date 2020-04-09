@@ -74,7 +74,7 @@ namespace MIPSAnalyst
 		if ((opcode.flags & IS_BRANCH) && (branchType == BRANCHTYPE_BRANCH || branchType == BRANCHTYPE_BC1))
 		{
 			if (!(opcode.flags & IS_LINKED))
-				return addr + 4 + ((signed short)(op&0xFFFF)<<2);
+				return addr + 4 + ((signed short)(op&0xFFFF) * 4);
 			else
 				return INVALIDTARGET;
 		}
@@ -120,7 +120,7 @@ namespace MIPSAnalyst
 			}
 
 			if (sure && takeBranch)
-				return addr + 4 + ((signed short)(op&0xFFFF)<<2);
+				return addr + 4 + ((signed short)(op&0xFFFF) * 4);
 			else if (sure && !takeBranch)
 				return addr + 8;
 			else

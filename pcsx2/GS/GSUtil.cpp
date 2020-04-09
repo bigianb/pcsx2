@@ -28,7 +28,9 @@
 #define SVN_MODS 0
 #endif
 
+#if defined(_M_X86)
 Xbyak::util::Cpu g_cpu;
+#endif
 
 static class GSUtilMaps
 {
@@ -148,6 +150,9 @@ bool GSUtil::HasCompatibleBits(uint32 spsm, uint32 dpsm)
 
 bool GSUtil::CheckSSE()
 {
+#if !defined(_M_X86)
+	return false;
+#else
 	bool status = true;
 
 	struct ISA
@@ -179,6 +184,7 @@ bool GSUtil::CheckSSE()
 	}
 
 	return status;
+#endif
 }
 
 CRCHackLevel GSUtil::GetRecommendedCRCHackLevel(GSRendererType type)

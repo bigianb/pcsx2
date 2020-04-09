@@ -164,8 +164,14 @@
 
 #endif
 
+#if defined(_M_X86)
 #include <xmmintrin.h>
 #include <emmintrin.h>
+#include <tmmintrin.h>
+#include <smmintrin.h>
+#else
+#include "sse2neon.h"
+#endif
 
 #ifndef _MM_DENORMALS_ARE_ZERO
 #define _MM_DENORMALS_ARE_ZERO 0x0040
@@ -185,14 +191,14 @@
 	(row3) = _mm_castps_si128(_mm_shuffle_ps(tmp2, tmp3, 0xDD)); \
 }
 
-#include <tmmintrin.h>
-#include <smmintrin.h>
+
 
 #if _M_SSE >= 0x500
 
 	#include <immintrin.h>
 
 #endif
+
 
 #undef min
 #undef max
@@ -203,7 +209,11 @@
 
 	static int _BitScanForward(unsigned long* const Index, const unsigned long Mask)
 	{
-#if defined(__GCC_ASM_FLAG_OUTPUTS__) && 0
+#if !defined(_M_X86)
+        *Index = __builtin_ffsl(Mask) - 1;
+        return Mask ? 1 : 0;
+
+#elif defined(__GCC_ASM_FLAG_OUTPUTS__) && 0
 		// Need GCC6 to test the code validity
 		int flag;
 		__asm__("bsfl %k[Mask], %k[Index]" : [Index] "=r" (*Index), "=@ccz" (flag) : [Mask] "mr" (Mask));

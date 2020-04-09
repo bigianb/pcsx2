@@ -71,14 +71,15 @@ void UpdateKeyboardInput()
 			g_key_status.release(pad, key.second);
 		for (const auto& key : map)
 		{
+            // note kCGEventSourceStateHIDSystemState does not work with screen share.
 			bool state;
 			if (key.first >> 16 == 0)
 			{
-				state = CGEventSourceKeyState(kCGEventSourceStateHIDSystemState, key.first);
+				state = CGEventSourceKeyState(kCGEventSourceStateCombinedSessionState, key.first);
 			}
 			else
 			{
-				state = CGEventSourceButtonState(kCGEventSourceStateHIDSystemState, (CGMouseButton)(key.first & 0xFFFF));
+				state = CGEventSourceButtonState(kCGEventSourceStateCombinedSessionState, (CGMouseButton)(key.first & 0xFFFF));
 			}
 			if (state)
 				PressButton(pad, key.second);

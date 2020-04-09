@@ -70,5 +70,7 @@ macro(add_pcsx2_test target)
 	add_test(NAME ${target} COMMAND ${target})
 endmacro()
 
-add_subdirectory(x86emitter)
+if (_M_X86)
+	add_subdirectory(x86emitter)
+endif()
 add_subdirectory(GS)

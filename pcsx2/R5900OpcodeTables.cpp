@@ -37,6 +37,7 @@ namespace R5900
 {
 	namespace Opcodes
 	{
+#if defined(_M_X86)
 		// Generates an entry for the given opcode name.
 		// Assumes the default function naming schemes for interpreter and recompiler  functions.
 	#	define MakeOpcode( name, cycles, flags ) \
@@ -82,7 +83,53 @@ namespace R5900
 			::R5900::Dynarec::OpcodeImpl::COP1::rec##name, \
 			::R5900::OpcodeDisasm::name \
 		}
+#else
+    // ARM - tempory hack until it has a recompiler
+#    define MakeOpcode( name, cycles, flags ) \
+    static const OPCODE name = { \
+        #name, \
+        cycles, \
+        flags, \
+        NULL, \
+        ::R5900::Interpreter::OpcodeImpl::name, \
+        NULL, /* TODO ARM ::R5900::Dynarec::OpcodeImpl::rec##name, */ \
+        ::R5900::OpcodeDisasm::name \
+    }
 
+#    define MakeOpcodeM( name, cycles, flags ) \
+    static const OPCODE name = { \
+        #name, \
+        cycles, \
+        flags, \
+        NULL, \
+        ::R5900::Interpreter::OpcodeImpl::MMI::name, \
+        NULL, /* TODO ARM ::R5900::Dynarec::OpcodeImpl::MMI::rec##name, */ \
+        ::R5900::OpcodeDisasm::name \
+    }
+
+#    define MakeOpcode0( name, cycles, flags ) \
+    static const OPCODE name = { \
+        #name, \
+        cycles, \
+        flags, \
+        NULL, \
+        ::R5900::Interpreter::OpcodeImpl::COP0::name, \
+        NULL, /* TODO ARM ::R5900::Dynarec::OpcodeImpl::COP0::rec##name, */ \
+        ::R5900::OpcodeDisasm::name \
+    }
+
+#    define MakeOpcode1( name, cycles, flags ) \
+    static const OPCODE name = { \
+        #name, \
+        cycles, \
+        flags, \
+        NULL, \
+        ::R5900::Interpreter::OpcodeImpl::COP1::name, \
+        NULL, /* TODO ARM ::R5900::Dynarec::OpcodeImpl::COP1::rec##name, */ \
+        ::R5900::OpcodeDisasm::name \
+    }
+#endif
+    
 	#	define MakeOpcodeClass( name ) \
 		static const OPCODE name = { \
 			#name, \

@@ -17,7 +17,9 @@
 #include "Common.h"
 #include "Vif.h"
 #include "Vif_Dma.h"
+#if defined(_M_X86)
 #include "newVif.h"
+#endif
 #include "GS.h"
 #include "Gif.h"
 #include "MTVU.h"
@@ -30,8 +32,9 @@ void vif0Reset()
 	/* Reset the whole VIF, meaning the internal pcsx2 vars and all the registers */
 	memzero(vif0);
 	memzero(vif0Regs);
-
+#if defined(_M_X86)
 	resetNewVif(0);
+#endif
 }
 
 void vif1Reset()
@@ -39,8 +42,9 @@ void vif1Reset()
 	/* Reset the whole VIF, meaning the internal pcsx2 vars, and all the registers */
 	memzero(vif1);
 	memzero(vif1Regs);
-
+#if defined(_M_X86)
 	resetNewVif(1);
+#endif
 }
 
 void SaveStateBase::vif0Freeze()
@@ -50,9 +54,10 @@ void SaveStateBase::vif0Freeze()
 	Freeze(g_vif0Cycles);
 
 	Freeze(vif0);
-
+#if defined(_M_X86)
 	Freeze(nVif[0].bSize);
 	FreezeMem(nVif[0].buffer, nVif[0].bSize);
+#endif
 }
 
 void SaveStateBase::vif1Freeze()
@@ -62,9 +67,10 @@ void SaveStateBase::vif1Freeze()
 	Freeze(g_vif1Cycles);
 
 	Freeze(vif1);
-
+#if defined(_M_X86)
 	Freeze(nVif[1].bSize);
 	FreezeMem(nVif[1].buffer, nVif[1].bSize);
+#endif
 }
 
 //------------------------------------------------------------------

@@ -15,7 +15,11 @@
 
 #pragma once
 
+#if defined(_M_X86)
 #include <xmmintrin.h>
+#else
+#include "sse2neon.h"
+#endif
 
 template <u8 data>
 __noinline void memset_sse_a(void* dest, const size_t size)

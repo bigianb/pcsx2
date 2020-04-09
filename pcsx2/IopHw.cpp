@@ -17,7 +17,9 @@
 #include "PrecompiledHeader.h"
 #include "IopCommon.h"
 
+#if defined(_M_X86)
 #include "iR5900.h"
+#endif
 #include "Sio.h"
 #include "Mdec.h"
 

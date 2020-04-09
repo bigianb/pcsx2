@@ -19,6 +19,7 @@ static u32 PAUSE_TIME = 0;
 
 static void MultiPause()
 {
+#if defined(_M_X86)
 	_mm_pause();
 	_mm_pause();
 	_mm_pause();
@@ -27,6 +28,7 @@ static void MultiPause()
 	_mm_pause();
 	_mm_pause();
 	_mm_pause();
+#endif
 }
 
 __noinline static void UpdatePauseTime()

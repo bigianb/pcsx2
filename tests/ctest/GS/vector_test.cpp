@@ -1,5 +1,5 @@
 /*  PCSX2 - PS2 Emulator for PCs
- *  Copyright (C) 2002-2021  PCSX2 Dev Team
+ *  Copyright (C) 2002-2021 PCSX2 Dev Team
  *
  *  PCSX2 is free software: you can redistribute it and/or modify it under the terms
  *  of the GNU Lesser General Public License as published by the Free Software Found-
@@ -13,29 +13,24 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
-#include "Pcsx2Defs.h"
-#include <cstdint>
-#include <cstddef>
+#include "PrecompiledHeader.h"
+#include "GSVector.h"
 
-struct fastjmp_buf
+#include <gtest/gtest.h>
+#include <string.h>
+
+// Very basic test to ensure the constructor works.
+TEST(VectorTest, Constructor)
 {
-#if defined(_M_X86_64) && defined(_WIN32)
-	static constexpr std::size_t BUF_SIZE = 240;
-#elif defined(_M_X86_64)
-	static constexpr std::size_t BUF_SIZE = 64;
-#elif defined(_M_X86_32)
-	static constexpr std::size_t BUF_SIZE = 24;
-#else
-// ARM
-static constexpr std::size_t BUF_SIZE = 24;
-//#error Unknown architecture.
-#endif
+	GSVector4i vi1234(1, 2, 3, 4);
+	ASSERT_EQ(1, vi1234.x);
+	ASSERT_EQ(2, vi1234.y);
+	ASSERT_EQ(3, vi1234.z);
+	ASSERT_EQ(4, vi1234.w);
 
-	alignas(16) std::uint8_t buf[BUF_SIZE];
-};
-
-extern "C" {
-int __fastcall fastjmp_set(fastjmp_buf* buf);
-__noreturn void __fastcall fastjmp_jmp(const fastjmp_buf* buf, int ret);
+	GSVector4 vf1234(1.0f, 2.0f, 3.0f, 4.0f);
+	EXPECT_FLOAT_EQ(1.0f, vf1234.x);
+	EXPECT_FLOAT_EQ(2.0f, vf1234.y);
+	EXPECT_FLOAT_EQ(3.0f, vf1234.z);
+	EXPECT_FLOAT_EQ(4.0f, vf1234.w);
 }

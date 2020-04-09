@@ -1881,17 +1881,17 @@ void GSDrawScanline::DrawScanline(int pixels, int left, int top, const GSVertexS
 							}
 						}
 
-						GSVector4i rb00 = c00.sll16(8).srl16(8);
+						GSVector4i rb00 = c00.sll16<8>().srl16(8);
 						GSVector4i ga00 = c00.srl16(8);
-						GSVector4i rb01 = c01.sll16(8).srl16(8);
+						GSVector4i rb01 = c01.sll16<8>().srl16(8);
 						GSVector4i ga01 = c01.srl16(8);
 
 						rb00 = rb00.lerp16_4(rb01, uf);
 						ga00 = ga00.lerp16_4(ga01, uf);
 
-						GSVector4i rb10 = c10.sll16(8).srl16(8);
+						GSVector4i rb10 = c10.sll16<8>().srl16(8);
 						GSVector4i ga10 = c10.srl16(8);
-						GSVector4i rb11 = c11.sll16(8).srl16(8);
+						GSVector4i rb11 = c11.sll16<8>().srl16(8);
 						GSVector4i ga11 = c11.srl16(8);
 
 						rb10 = rb10.lerp16_4(rb11, uf);
@@ -1919,7 +1919,7 @@ void GSDrawScanline::DrawScanline(int pixels, int left, int top, const GSVertexS
 							}
 						}
 
-						rb = c00.sll16(8).srl16(8);
+						rb = c00.sll16<8>().srl16(8);
 						ga = c00.srl16(8);
 					}
 
@@ -2002,17 +2002,17 @@ void GSDrawScanline::DrawScanline(int pixels, int left, int top, const GSVertexS
 								}
 							}
 
-							GSVector4i rb00 = c00.sll16(8).srl16(8);
+							GSVector4i rb00 = c00.sll16<8>().srl16(8);
 							GSVector4i ga00 = c00.srl16(8);
-							GSVector4i rb01 = c01.sll16(8).srl16(8);
+							GSVector4i rb01 = c01.sll16<8>().srl16(8);
 							GSVector4i ga01 = c01.srl16(8);
 
 							rb00 = rb00.lerp16_4(rb01, uf);
 							ga00 = ga00.lerp16_4(ga01, uf);
 
-							GSVector4i rb10 = c10.sll16(8).srl16(8);
+							GSVector4i rb10 = c10.sll16<8>().srl16(8);
 							GSVector4i ga10 = c10.srl16(8);
-							GSVector4i rb11 = c11.sll16(8).srl16(8);
+							GSVector4i rb11 = c11.sll16<8>().srl16(8);
 							GSVector4i ga11 = c11.srl16(8);
 
 							rb10 = rb10.lerp16_4(rb11, uf);
@@ -2040,7 +2040,7 @@ void GSDrawScanline::DrawScanline(int pixels, int left, int top, const GSVertexS
 								}
 							}
 
-							rb2 = c00.sll16(8).srl16(8);
+							rb2 = c00.sll16<8>().srl16(8);
 							ga2 = c00.srl16(8);
 						}
 
@@ -2134,17 +2134,17 @@ void GSDrawScanline::DrawScanline(int pixels, int left, int top, const GSVertexS
 							c11 = addr11.gather32_32(tex);
 						}
 
-						GSVector4i rb00 = c00.sll16(8).srl16(8);
+						GSVector4i rb00 = c00.sll16<8>().srl16(8);
 						GSVector4i ga00 = c00.srl16(8);
-						GSVector4i rb01 = c01.sll16(8).srl16(8);
+						GSVector4i rb01 = c01.sll16<8>().srl16(8);
 						GSVector4i ga01 = c01.srl16(8);
 
 						rb00 = rb00.lerp16_4(rb01, uf);
 						ga00 = ga00.lerp16_4(ga01, uf);
 
-						GSVector4i rb10 = c10.sll16(8).srl16(8);
+						GSVector4i rb10 = c10.sll16<8>().srl16(8);
 						GSVector4i ga10 = c10.srl16(8);
-						GSVector4i rb11 = c11.sll16(8).srl16(8);
+						GSVector4i rb11 = c11.sll16<8>().srl16(8);
 						GSVector4i ga11 = c11.srl16(8);
 
 						rb10 = rb10.lerp16_4(rb11, uf);
@@ -2166,7 +2166,7 @@ void GSDrawScanline::DrawScanline(int pixels, int left, int top, const GSVertexS
 							c00 = addr00.gather32_32((const uint32*)m_global.tex[0]);
 						}
 
-						rb = c00.sll16(8).srl16(8);
+						rb = c00.sll16<8>().srl16(8);
 						ga = c00.srl16(8);
 					}
 				}
@@ -2416,7 +2416,7 @@ void GSDrawScanline::DrawScanline(int pixels, int left, int top, const GSVertexS
 					{
 						case 0:
 						case 1:
-							rbd = fd.sll16(8).srl16(8);
+							rbd = fd.sll16<8>().srl16(8);
 							gad = fd.srl16(8);
 							break;
 						case 2:
@@ -2446,8 +2446,8 @@ void GSDrawScanline::DrawScanline(int pixels, int left, int top, const GSVertexS
 					{
 						switch(sel.abc)
 						{
-							case 0: a = gas.yywwlh().sll16(7); break;
-							case 1: a = gad.yywwlh().sll16(7); break;
+							case 0: a = gas.yywwlh().sll16<7>(); break;
+							case 1: a = gad.yywwlh().sll16<7>(); break;
 							case 2: a = m_global.afix; break;
 						}
 

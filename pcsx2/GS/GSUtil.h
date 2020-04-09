@@ -17,7 +17,10 @@
 
 #include "GS.h"
 
+#if defined (_M_X86)
 #include <xbyak/xbyak_util.h>
+extern Xbyak::util::Cpu g_cpu;
+#endif
 
 class GSUtil
 {
@@ -54,4 +57,4 @@ std::string GStempdir();
 
 const char* psm_str(int psm);
 
-extern Xbyak::util::Cpu g_cpu;
+

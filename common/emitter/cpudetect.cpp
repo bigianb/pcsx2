@@ -13,6 +13,8 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#if defined(_M_X86)
+
 #include "common/MemcpyFast.h"
 #include "common/General.h"
 #include "common/emitter/cpudetect_internal.h"
@@ -345,3 +347,6 @@ u32 x86capabilities::CachedMHz()
 	}
 	return local;
 }
+#else
+
+#endif

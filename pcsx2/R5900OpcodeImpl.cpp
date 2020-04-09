@@ -688,12 +688,13 @@ void LDL()
 	u32 addr = cpuRegs.GPR.r[_Rs_].UL[0] + _Imm_;
 	u32 shift = addr & 7;
 
-	u64 mem;
-	memRead64(addr & ~7, &mem);
+    // ARM needs this because memRead64 internally casts it to a 128 bit pointer
+	u64 mem[2];
+	memRead64(addr & ~7, mem);
 
 	if( !_Rt_ ) return;
 	cpuRegs.GPR.r[_Rt_].UD[0] =	(cpuRegs.GPR.r[_Rt_].UD[0] & LDL_MASK[shift]) |
-								(mem << LDL_SHIFT[shift]);
+								(mem[0] << LDL_SHIFT[shift]);
 }
 
 void LDR()
@@ -701,12 +702,13 @@ void LDR()
 	u32 addr = cpuRegs.GPR.r[_Rs_].UL[0] + _Imm_;
 	u32 shift = addr & 7;
 
-	u64 mem;
-	memRead64(addr & ~7, &mem);
+    // ARM needs this because memRead64 internally casts it to a 128 bit pointer
+	u64 mem[2];
+	memRead64(addr & ~7, mem);
 
 	if (!_Rt_) return;
 	cpuRegs.GPR.r[_Rt_].UD[0] =	(cpuRegs.GPR.r[_Rt_].UD[0] & LDR_MASK[shift]) |
-								(mem >> LDR_SHIFT[shift]);
+								(mem[0] >> LDR_SHIFT[shift]);
 }
 
 void LQ()
@@ -817,12 +819,12 @@ void SDL()
 {
 	u32 addr = cpuRegs.GPR.r[_Rs_].UL[0] + _Imm_;
 	u32 shift = addr & 7;
-	u64 mem;
+	u64 mem[2];
 
-	memRead64(addr & ~7, &mem);
-	mem = (cpuRegs.GPR.r[_Rt_].UD[0] >> SDL_SHIFT[shift]) |
-		  (mem & SDL_MASK[shift]);
-	memWrite64(addr & ~7, &mem);
+	memRead64(addr & ~7, mem);
+	mem[0] = (cpuRegs.GPR.r[_Rt_].UD[0] >> SDL_SHIFT[shift]) |
+		  (mem[0] & SDL_MASK[shift]);
+	memWrite64(addr & ~7, mem);
 }
 
 
@@ -830,12 +832,12 @@ void SDR()
 {
 	u32 addr = cpuRegs.GPR.r[_Rs_].UL[0] + _Imm_;
 	u32 shift = addr & 7;
-	u64 mem;
+	u64 mem[2];
 
-	memRead64(addr & ~7, &mem);
-	mem = (cpuRegs.GPR.r[_Rt_].UD[0] << SDR_SHIFT[shift]) |
-		  (mem & SDR_MASK[shift]);
-	memWrite64(addr & ~7, &mem );
+	memRead64(addr & ~7, mem);
+	mem[0] = (cpuRegs.GPR.r[_Rt_].UD[0] << SDR_SHIFT[shift]) |
+		  (mem[0] & SDR_MASK[shift]);
+	memWrite64(addr & ~7, mem );
 }
 
 void SQ()

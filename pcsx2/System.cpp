@@ -17,7 +17,9 @@
 #include "Common.h"
 #include "IopCommon.h"
 #include "VUmicro.h"
+#if defined(_M_X86)
 #include "newVif.h"
+#endif
 #include "MTVU.h"
 
 #include "Elfheader.h"
@@ -193,7 +195,7 @@ void SysLogMachineCaps()
 		WX_STR(GetOSVersionString()),
 		(u32)(GetPhysicalMemory() / _1mb)
 	);
-
+#if defined(_M_x86)
 	u32 speed = x86caps.CalculateMHz();
 
 	Console.Indent().WriteLn(
@@ -238,7 +240,7 @@ void SysLogMachineCaps()
 #ifdef __M_X86_64
     Console.Indent().WriteLn("Pcsx2 was compiled as 64-bits.");
 #endif
-
+#endif
 	Console.Newline();
 
 #ifdef _WIN32
@@ -310,9 +312,10 @@ CpuInitializer< CpuType >::~CpuInitializer()
 class CpuInitializerSet
 {
 public:
+#if defined(_M_X86)
 	CpuInitializer<recMicroVU0>		microVU0;
 	CpuInitializer<recMicroVU1>		microVU1;
-
+#endif
 	CpuInitializer<InterpVU0>		interpVU0;
 	CpuInitializer<InterpVU1>		interpVU1;
 
@@ -359,9 +362,11 @@ static VirtualMemoryManagerPtr makeMainMemoryManager() {
 
 	// If the above failed and it's x86-64, recompiled code is going to break!
 	// If it's i386 anything can reach anything so it doesn't matter
+#if defined(_M_X86)
 	if (sizeof(void*) == 8) {
 		pxAssertRel(0, "Failed to find a good place for the main memory allocation, recompilers may fail");
 	}
+#endif
 	return std::make_shared<VirtualMemoryManager>("Main Memory Manager", 0, HostMemoryMap::Size);
 }
 
@@ -449,10 +454,10 @@ void SysMainMemory::DecommitAll()
 	m_ee.Decommit();
 	m_iop.Decommit();
 	m_vu.Decommit();
-
+#if defined(_M_X86)
 	closeNewVif(0);
 	closeNewVif(1);
-
+#endif
 	vtlb_Core_Free();
 }
 
@@ -464,10 +469,10 @@ void SysMainMemory::ReleaseAll()
 	ConsoleIndentScope indent(1);
 
 	vtlb_Core_Free();		// Just to be sure... (calling order could result in it getting missed during Decommit).
-
+#if defined(_M_X86)
 	releaseNewVif(0);
 	releaseNewVif(1);
-
+#endif
 	m_ee.Decommit();
 	m_iop.Decommit();
 	m_vu.Decommit();
@@ -485,7 +490,7 @@ SysCpuProviderPack::SysCpuProviderPack()
 	ConsoleIndentScope indent(1);
 
 	CpuProviders = std::make_unique<CpuInitializerSet>();
-
+#if defined(_M_X86)
 	try {
 		recCpu.Reserve();
 	}
@@ -507,23 +512,31 @@ SysCpuProviderPack::SysCpuProviderPack()
 	}
 
 	// hmm! : VU0 and VU1 pre-allocations should do sVU and mVU separately?  Sounds complicated. :(
-
 	if (newVifDynaRec)
 	{
 		dVifReserve(0);
 		dVifReserve(1);
 	}
+#endif
 }
-
+#if defined(_M_X86)
 bool SysCpuProviderPack::IsRecAvailable_MicroVU0() const { return CpuProviders->microVU0.IsAvailable(); }
 bool SysCpuProviderPack::IsRecAvailable_MicroVU1() const { return CpuProviders->microVU1.IsAvailable(); }
 BaseException* SysCpuProviderPack::GetException_MicroVU0() const { return CpuProviders->microVU0.ExThrown.get(); }
 BaseException* SysCpuProviderPack::GetException_MicroVU1() const { return CpuProviders->microVU1.ExThrown.get(); }
+#else
+bool SysCpuProviderPack::IsRecAvailable_MicroVU0() const { return false; }
+bool SysCpuProviderPack::IsRecAvailable_MicroVU1() const { return false; }
+BaseException* SysCpuProviderPack::GetException_MicroVU0() const { return nullptr; }
+BaseException* SysCpuProviderPack::GetException_MicroVU1() const { return nullptr; }
+#endif
+
 
 void SysCpuProviderPack::CleanupMess() noexcept
 {
 	try
 	{
+#if defined(_M_X86)
 		psxRec.Shutdown();
 		recCpu.Shutdown();
 
@@ -532,6 +545,7 @@ void SysCpuProviderPack::CleanupMess() noexcept
 			dVifRelease(0);
 			dVifRelease(1);
 		}
+#endif
 	}
 	DESTRUCTOR_CATCHALL
 }
@@ -556,17 +570,21 @@ BaseVUmicroCPU* CpuVU1 = NULL;
 
 void SysCpuProviderPack::ApplyConfig() const
 {
-	Cpu		= CHECK_EEREC	? &recCpu : &intCpu;
-	psxCpu	= CHECK_IOPREC	? &psxRec : &psxInt;
-
 	CpuVU0 = CpuProviders->interpVU0;
 	CpuVU1 = CpuProviders->interpVU1;
-
+#if defined(_M_X86)
+	Cpu	= CHECK_EEREC	? &recCpu : &intCpu;
+	psxCpu	= CHECK_IOPREC	? &psxRec : &psxInt;
 	if( EmuConfig.Cpu.Recompiler.EnableVU0 )
 		CpuVU0 = (BaseVUmicroCPU*)CpuProviders->microVU0;
 
 	if( EmuConfig.Cpu.Recompiler.EnableVU1 )
 		CpuVU1 = (BaseVUmicroCPU*)CpuProviders->microVU1;
+#else
+	Cpu	= &intCpu;
+	psxCpu	= &psxInt;
+#endif
+
 }
 
 // Resets all PS2 cpu execution caches, which does not affect that actual PS2 state/condition.
@@ -580,19 +598,20 @@ void SysClearExecutionCache()
 
 	Cpu->Reset();
 	psxCpu->Reset();
-
+#if defined(_M_X86)
 	// mVU's VU0 needs to be properly initialized for macro mode even if it's not used for micro mode!
 	if (CHECK_EEREC)
 		((BaseVUmicroCPU*)GetCpuProviders().CpuProviders->microVU0)->Reset();
-
+#endif
 	CpuVU0->Reset();
 	CpuVU1->Reset();
-
+#if defined(_M_X86)
 	if (newVifDynaRec)
 	{
 		dVifReset(0);
 		dVifReset(1);
 	}
+#endif
 }
 
 // Maps a block of memory for use as a recompiled code buffer, and ensures that the

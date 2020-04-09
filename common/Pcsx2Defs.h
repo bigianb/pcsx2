@@ -29,7 +29,9 @@
 
 #include "Pcsx2Types.h"
 
+#if defined(_M_X86)
 #include "common/emitter/x86_intrin.h"
+#endif
 
 // The C++ standard doesn't allow `offsetof` to be used on non-constant values (e.g. `offsetof(class, field[i])`)
 // Use this in those situations
@@ -99,8 +101,12 @@ static const bool IsDebugBuild = false;
 //
 
 // Defines the memory page size for the target platform at compilation.  All supported platforms
-// (which means Intel only right now) have a 4k granularity.
+// (which means Intel only right now) have a 4k granularity ... except mac M1
+#if defined(__aarch64__) && defined(__APPLE__)
+#define PCSX2_PAGESIZE 0x4000
+#else
 #define PCSX2_PAGESIZE 0x1000
+#endif
 static const int __pagesize = PCSX2_PAGESIZE;
 
 // --------------------------------------------------------------------------------------

@@ -21,7 +21,12 @@
 
 #pragma once
 
+#if defined(_M_X86)
 #include <immintrin.h>
+#else
+#include "sse2neon.h"
+#endif
+
 // Can't stick them in structs because it breaks calling convention things, yay
 using r64  = __m128i;
 using r128 = __m128i;

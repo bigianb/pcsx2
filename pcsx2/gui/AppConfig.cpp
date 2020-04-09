@@ -509,6 +509,7 @@ AppConfig::AppConfig()
 	EnableFastBoot = true;
 
 	EnablePresets = true;
+    AskOnBoot = false;
 	PresetIndex = 1;
 
 	CdvdSource = CDVD_SourceType::Iso;

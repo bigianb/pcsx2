@@ -309,22 +309,22 @@ void Panels::CpuPanelVU::OnRestoreDefaults(wxCommandEvent &evt)
 
 	evt.Skip();
 }
-
+#if defined(_M_X86)
 void Panels::BaseAdvancedCpuOptions::ApplyRoundmode( SSE_MXCSR& mxcsr )
 {
 	mxcsr.RoundingControl	= m_RoundModePanel->GetSelection();
 	mxcsr.DenormalsAreZero	= 1;
 	mxcsr.FlushToZero		= 1;
 }
-
+#endif
 void Panels::AdvancedOptionsFPU::Apply()
 {
 	Pcsx2Config::CpuOptions& cpuOps( g_Conf->EmuOptions.Cpu );
 	Pcsx2Config::RecompilerOptions& recOps( cpuOps.Recompiler );
-
+#if defined(_M_X86)
 	cpuOps.sseMXCSR = Pcsx2Config::CpuOptions().sseMXCSR;		// set default
 	ApplyRoundmode( cpuOps.sseMXCSR );
-
+#endif
 	const int clampSel		= m_ClampModePanel->GetSelection();
 
 	recOps.fpuOverflow		= clampSel >= 1;
@@ -343,9 +343,9 @@ void Panels::AdvancedOptionsFPU::ApplyConfigToGui( AppConfig& configToApply, int
 {
 	const Pcsx2Config::CpuOptions& cpuOps( configToApply.EmuOptions.Cpu );
 	const Pcsx2Config::RecompilerOptions& recOps( cpuOps.Recompiler );
-
+#if defined(_M_X86)
 	m_RoundModePanel->SetSelection( cpuOps.sseMXCSR.RoundingControl );
-
+#endif
 	if( recOps.fpuFullMode )			m_ClampModePanel->SetSelection( 3 );
 	else if( recOps.fpuExtraOverflow )	m_ClampModePanel->SetSelection( 2 );
 	else if( recOps.fpuOverflow )		m_ClampModePanel->SetSelection( 1 );
@@ -358,10 +358,10 @@ void Panels::AdvancedOptionsVU::Apply()
 {
 	Pcsx2Config::CpuOptions& cpuOps( g_Conf->EmuOptions.Cpu );
 	Pcsx2Config::RecompilerOptions& recOps( cpuOps.Recompiler );
-
+#if defined(_M_X86)
 	cpuOps.sseVUMXCSR = Pcsx2Config::CpuOptions().sseVUMXCSR;		// set default
 	ApplyRoundmode( cpuOps.sseVUMXCSR );
-
+#endif
 	const int clampSel		= m_ClampModePanel->GetSelection();
 
 	recOps.vuOverflow		= clampSel >= 1;
@@ -380,9 +380,9 @@ void Panels::AdvancedOptionsVU::ApplyConfigToGui( AppConfig& configToApply, int 
 {
 	const Pcsx2Config::CpuOptions& cpuOps( configToApply.EmuOptions.Cpu );
 	const Pcsx2Config::RecompilerOptions& recOps( cpuOps.Recompiler );
-
+#if defined(_M_X86)
 	m_RoundModePanel->SetSelection( cpuOps.sseVUMXCSR.RoundingControl );
-
+#endif
 	if( recOps.vuSignOverflow )			m_ClampModePanel->SetSelection( 3 );
 	else if( recOps.vuExtraOverflow )	m_ClampModePanel->SetSelection( 2 );
 	else if( recOps.vuOverflow )		m_ClampModePanel->SetSelection( 1 );

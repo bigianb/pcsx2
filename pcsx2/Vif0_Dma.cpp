@@ -17,8 +17,9 @@
 #include "Common.h"
 #include "Vif_Dma.h"
 #include "VUmicro.h"
+#if defined(_M_X86)
 #include "newVif.h"
-
+#endif
 u32 g_vif0Cycles = 0;
 
 // Run VU0 until finish, don't add cycles to EE

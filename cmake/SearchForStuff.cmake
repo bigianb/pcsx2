@@ -48,9 +48,9 @@ else()
 	# They do uname -m if missing so only fix for cross compilations.
 	# http://pkgs.fedoraproject.org/cgit/wxGTK.git/plain/wx-config
 	if(Fedora AND CMAKE_CROSSCOMPILING)
-		set(wxWidgets_CONFIG_OPTIONS --arch ${PCSX2_TARGET_ARCHITECTURES} --unicode=yes)
+		list(APPEND wxWidgets_CONFIG_OPTIONS --arch ${PCSX2_TARGET_ARCHITECTURES} --unicode=yes)
 	else()
-		set(wxWidgets_CONFIG_OPTIONS --unicode=yes)
+		list(APPEND wxWidgets_CONFIG_OPTIONS --unicode=yes)
 	endif()
 
 	# I'm removing the version check, because it excludes newer versions and requires specifically 3.0.

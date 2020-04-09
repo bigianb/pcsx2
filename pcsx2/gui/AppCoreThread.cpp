@@ -268,7 +268,7 @@ static int loadGameSettings(Pcsx2Config& dest, const GameDatabaseSchema::GameEnt
 		return 0;
 
 	int gf = 0;
-
+#if defined(_M_X86)
 	if (game.eeRoundMode != GameDatabaseSchema::RoundMode::Undefined)
 	{
 		SSE_RoundMode eeRM = (SSE_RoundMode)enum_cast(game.eeRoundMode);
@@ -290,7 +290,7 @@ static int loadGameSettings(Pcsx2Config& dest, const GameDatabaseSchema::GameEnt
 			gf++;
 		}
 	}
-
+#endif
 	if (game.eeClampMode != GameDatabaseSchema::ClampMode::Undefined)
 	{
 		int clampMode = enum_cast(game.eeClampMode);

@@ -210,24 +210,28 @@ void Pcsx2Config::RecompilerOptions::LoadSave(SettingsWrapper& wrap)
 	SettingsWrapBitBool(PreBlockCheckIOP);
 }
 
+
 Pcsx2Config::CpuOptions::CpuOptions()
 {
+#if defined(_M_X86)
 	sseMXCSR.bitmask = DEFAULT_sseMXCSR;
 	sseVUMXCSR.bitmask = DEFAULT_sseVUMXCSR;
+#endif
 }
 
 void Pcsx2Config::CpuOptions::ApplySanityCheck()
 {
+#if defined(_M_X86)
 	sseMXCSR.ClearExceptionFlags().DisableExceptions();
 	sseVUMXCSR.ClearExceptionFlags().DisableExceptions();
-
+#endif
 	Recompiler.ApplySanityCheck();
 }
 
 void Pcsx2Config::CpuOptions::LoadSave(SettingsWrapper& wrap)
 {
 	SettingsWrapSection("EmuCore/CPU");
-
+#if defined(_M_X86)
 	SettingsWrapBitBoolEx(sseMXCSR.DenormalsAreZero, "FPU.DenormalsAreZero");
 	SettingsWrapBitBoolEx(sseMXCSR.FlushToZero, "FPU.FlushToZero");
 	SettingsWrapBitfieldEx(sseMXCSR.RoundingControl, "FPU.Roundmode");
@@ -235,9 +239,10 @@ void Pcsx2Config::CpuOptions::LoadSave(SettingsWrapper& wrap)
 	SettingsWrapBitBoolEx(sseVUMXCSR.DenormalsAreZero, "VU.DenormalsAreZero");
 	SettingsWrapBitBoolEx(sseVUMXCSR.FlushToZero, "VU.FlushToZero");
 	SettingsWrapBitfieldEx(sseVUMXCSR.RoundingControl, "VU.Roundmode");
-
+#endif
 	Recompiler.LoadSave(wrap);
 }
+
 
 void Pcsx2Config::GSOptions::LoadSave(SettingsWrapper& wrap)
 {
@@ -587,7 +592,9 @@ void Pcsx2Config::LoadSave(SettingsWrapper& wrap)
 	// Process various sub-components:
 
 	Speedhacks.LoadSave(wrap);
+#if defined(_M_X86)
 	Cpu.LoadSave(wrap);
+#endif
 	GS.LoadSave(wrap);
 	Gamefixes.LoadSave(wrap);
 	Profiler.LoadSave(wrap);
@@ -658,7 +665,9 @@ bool Pcsx2Config::operator==(const Pcsx2Config& right) const
 {
 	bool equal =
 		OpEqu(bitset) &&
+#if defined(_M_X86)
 		OpEqu(Cpu) &&
+#endif
 		OpEqu(GS) &&
 		OpEqu(Speedhacks) &&
 		OpEqu(Gamefixes) &&
@@ -679,7 +688,9 @@ bool Pcsx2Config::operator==(const Pcsx2Config& right) const
 
 void Pcsx2Config::CopyConfig(const Pcsx2Config& cfg)
 {
+#if defined(_M_X86)
 	Cpu = cfg.Cpu;
+#endif
 	GS = cfg.GS;
 	Speedhacks = cfg.Speedhacks;
 	Gamefixes = cfg.Gamefixes;

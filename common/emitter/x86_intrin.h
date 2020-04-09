@@ -21,7 +21,9 @@
 // Yes there are several files for the same features!
 // x86intrin.h which is the general include provided by the compiler
 // x86_intrin.h, this file, which is compatibility layer for severals intrinsics
+#if defined(_M_X86)
 #include "x86intrin.h"
+#endif
 
 #else
 

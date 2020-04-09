@@ -17,7 +17,12 @@
 #include "Common.h"
 
 #include "Hardware.h"
+#if defined(_M_X86)
 #include "newVif.h"
+#else
+void VifUnpackSSE_Init() {}
+void VifUnpackSSE_Destroy() {}
+#endif
 #include "IPU/IPUdma.h"
 #include "Gif_Unit.h"
 #include "IopCommon.h"

@@ -14,8 +14,9 @@
  */
 
 #pragma once
-
+#if defined(_M_X86)
 #include "common/emitter/tools.h"
+#endif
 #include "common/General.h"
 #include "common/Path.h"
 #include <string>
@@ -292,21 +293,26 @@ struct Pcsx2Config
 		}
 	};
 
+
 	// ------------------------------------------------------------------------
 	struct CpuOptions
 	{
 		RecompilerOptions Recompiler;
-
+#if defined(_M_X86)
 		SSE_MXCSR sseMXCSR;
 		SSE_MXCSR sseVUMXCSR;
-
+#endif
 		CpuOptions();
 		void LoadSave(SettingsWrapper& wrap);
 		void ApplySanityCheck();
 
 		bool operator==(const CpuOptions& right) const
 		{
+#if defined(_M_X86)
 			return OpEqu(sseMXCSR) && OpEqu(sseVUMXCSR) && OpEqu(Recompiler);
+#else
+			return OpEqu(Recompiler);
+#endif
 		}
 
 		bool operator!=(const CpuOptions& right) const
@@ -314,6 +320,7 @@ struct Pcsx2Config
 			return !this->operator==(right);
 		}
 	};
+
 
 	// ------------------------------------------------------------------------
 	struct GSOptions
@@ -568,7 +575,6 @@ struct Pcsx2Config
 	bool McdCompressNTFS;
 #endif
 	BITFIELD_END
-
 	CpuOptions Cpu;
 	GSOptions GS;
 	SpeedhackOptions Speedhacks;

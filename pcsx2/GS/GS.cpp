@@ -79,11 +79,13 @@ void GSsetBaseMem(uint8* mem)
 
 int GSinit()
 {
+#if defined(_M_X86)
 	if (!GSUtil::CheckSSE())
 	{
 		return -1;
 	}
-
+#endif
+    
 	// Vector instructions must be avoided when initialising GS since PCSX2
 	// can crash if the CPU does not support the instruction set.
 	// Initialise it here instead - it's not ideal since we have to strip the
@@ -556,9 +558,10 @@ void GSconfigure()
 {
 	try
 	{
+#if defined(_M_X86)
 		if (!GSUtil::CheckSSE())
 			return;
-
+#endif
 		theApp.SetConfigDir();
 		theApp.Init();
 
@@ -1089,7 +1092,8 @@ GSApp::GSApp()
 	// Empty constructor causes an illegal instruction exception on an SSE4.2 machine on Windows.
 	// Non-empty doesn't, but raises a SIGILL signal when compiled against GCC 6.1.1.
 	// So here's a compromise.
-#ifdef _WIN32
+    // ARM needs to call this here because it is not SSE and so it will otherwise never be called.
+#if defined(_WIN32) || !defined(_M_X86)
 	Init();
 #endif
 }

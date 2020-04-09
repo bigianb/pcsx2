@@ -108,7 +108,6 @@ set(pcsx2Sources
 	COP2.cpp
 	Counters.cpp
 	GameDatabase.cpp
-	Dump.cpp
 	Elfheader.cpp
 	FW.cpp
 	FiFo.cpp
@@ -188,7 +187,6 @@ set(pcsx2Headers
 	COP0.h
 	Counters.h
 	Dmac.h
-	Dump.h
 	GameDatabase.h
 	Elfheader.h
 	FW.h
@@ -534,13 +532,13 @@ else(WIN32)
 
 	add_custom_command(
 		OUTPUT ${CMAKE_BINARY_DIR}/pcsx2/PAD/Linux/resources_pad.h
-		COMMAND glib-compile-resources --sourcedir "${CMAKE_SOURCE_DIR}/pcsx2/PAD/Linux/res" --generate-header
+		COMMAND ${GLIB_COMPILE_RESOURCES_EXECUTABLE} --sourcedir "${CMAKE_SOURCE_DIR}/pcsx2/PAD/Linux/res" --generate-header
 		--c-name PAD_res "${CMAKE_SOURCE_DIR}/pcsx2/PAD/Linux/res/PAD-res.xml" --target=${CMAKE_BINARY_DIR}/pcsx2/PAD/Linux/resources_pad.h
 		DEPENDS ${CMAKE_SOURCE_DIR}/pcsx2/PAD/Linux/res/PAD-res.xml ${CMAKE_SOURCE_DIR}/pcsx2/PAD/Linux/res/game_controller_db.txt)
 
 	add_custom_command(
 		OUTPUT ${CMAKE_BINARY_DIR}/pcsx2/PAD/Linux/resources_pad.cpp
-		COMMAND glib-compile-resources --sourcedir "${CMAKE_SOURCE_DIR}/pcsx2/PAD/Linux/res" --generate-source
+		COMMAND ${GLIB_COMPILE_RESOURCES_EXECUTABLE} --sourcedir "${CMAKE_SOURCE_DIR}/pcsx2/PAD/Linux/res" --generate-source
 		--c-name PAD_res "${CMAKE_SOURCE_DIR}/pcsx2/PAD/Linux/res/PAD-res.xml" --target=${CMAKE_BINARY_DIR}/pcsx2/PAD/Linux/resources_pad.cpp
 		DEPENDS ${CMAKE_SOURCE_DIR}/pcsx2/PAD/Linux/res/PAD-res.xml ${CMAKE_SOURCE_DIR}/pcsx2/PAD/Linux/res/game_controller_db.txt)
 
@@ -638,13 +636,8 @@ set(pcsx2GSSources
 	GS/Renderers/HW/GSRendererHW.cpp
 	GS/Renderers/HW/GSTextureCache.cpp
 	GS/Renderers/SW/GSDrawScanline.cpp
-	GS/Renderers/SW/GSDrawScanlineCodeGenerator.cpp
-	GS/Renderers/SW/GSDrawScanlineCodeGenerator.all.cpp
-	GS/Renderers/SW/GSNewCodeGenerator.cpp
 	GS/Renderers/SW/GSRasterizer.cpp
 	GS/Renderers/SW/GSRendererSW.cpp
-	GS/Renderers/SW/GSSetupPrimCodeGenerator.cpp
-	GS/Renderers/SW/GSSetupPrimCodeGenerator.all.cpp
 	GS/Renderers/SW/GSTextureCacheSW.cpp
 	GS/Renderers/SW/GSTextureSW.cpp
 	GS/Renderers/OpenGL/GLLoader.cpp
@@ -656,6 +649,16 @@ set(pcsx2GSSources
 	GS/Renderers/OpenGL/GSTextureOGL.cpp
 	GS/Window/GSSetting.cpp
 	)
+
+if(${PCSX2_TARGET_ARCHITECTURES} MATCHES "i386" OR ${PCSX2_TARGET_ARCHITECTURES} MATCHES "x86_64")
+list(APPEND pcsx2GSSources
+	GS/Renderers/SW/GSNewCodeGenerator.cpp
+	GS/Renderers/SW/GSDrawScanlineCodeGenerator.cpp	
+	GS/Renderers/SW/GSDrawScanlineCodeGenerator.all.cpp
+	GS/Renderers/SW/GSSetupPrimCodeGenerator.cpp
+	GS/Renderers/SW/GSSetupPrimCodeGenerator.all.cpp
+)
+endif()
 
 # GS headers
 set(pcsx2GSHeaders
@@ -875,13 +878,13 @@ else(WIN32)
 
 	add_custom_command(
 		OUTPUT ${CMAKE_BINARY_DIR}/pcsx2/GS/GS_res.h
-		COMMAND glib-compile-resources --sourcedir "${CMAKE_SOURCE_DIR}/pcsx2/GS/res" --generate-header
+		COMMAND ${GLIB_COMPILE_RESOURCES_EXECUTABLE} --sourcedir "${CMAKE_SOURCE_DIR}/pcsx2/GS/res" --generate-header
 		--c-name GS_res "${CMAKE_SOURCE_DIR}/pcsx2/GS/res/GS-res.xml" --target=${CMAKE_BINARY_DIR}/pcsx2/GS/GS_res.h
 		DEPENDS ${pcsx2GSResources})
 
 	add_custom_command(
 		OUTPUT ${CMAKE_BINARY_DIR}/pcsx2/GS/GS_res.cpp
-		COMMAND glib-compile-resources --sourcedir "${CMAKE_SOURCE_DIR}/pcsx2/GS/res" --generate-source
+		COMMAND ${GLIB_COMPILE_RESOURCES_EXECUTABLE} --sourcedir "${CMAKE_SOURCE_DIR}/pcsx2/GS/res" --generate-source
 		--c-name GS_res "${CMAKE_SOURCE_DIR}/pcsx2/GS/res/GS-res.xml" --target=${CMAKE_BINARY_DIR}/pcsx2/GS/GS_res.cpp
 		DEPENDS ${pcsx2GSResources})
 
@@ -1322,15 +1325,41 @@ set(pcsx2x86Headers
 	x86/R5900_Profiler.h
 	)
 
-# These ones benefit a lot from LTO
-set(pcsx2LTOSources
-	${pcsx2Sources}
-	${pcsx2Headers}
-	${pcsx2IPUSources}
-	${pcsx2IPUHeaders}
-	${pcsx2x86Sources}
-	${pcsx2x86Headers}
-)
+
+# arm sources
+set(pcsx2armSources
+	arm/newVif_Unpack.cpp
+	)
+
+# arm headers
+set(pcsx2armHeaders
+	arm/newVif.h
+	)
+
+if(${PCSX2_TARGET_ARCHITECTURES} MATCHES "i386" OR ${PCSX2_TARGET_ARCHITECTURES} MATCHES "x86_64")
+	# These ones benefit a lot from LTO
+	set(pcsx2LTOSources
+		${pcsx2Sources}
+		${pcsx2Headers}
+		${pcsx2IPUSources}
+		${pcsx2IPUHeaders}
+		${pcsx2x86Sources}
+		${pcsx2x86Headers}
+	)
+	target_sources(PCSX2 PRIVATE
+			Dump.cpp
+			Dump.h
+		)
+else()
+	set(pcsx2LTOSources
+		${pcsx2Sources}
+		${pcsx2Headers}
+		${pcsx2IPUSources}
+		${pcsx2IPUHeaders} 
+		${pcsx2armSources}
+		${pcsx2armHeaders}
+	)
+endif()
 
 if(LTO_PCSX2_CORE)
 	add_library(PCSX2_LTO ${pcsx2LTOSources})
@@ -1469,6 +1498,14 @@ else()
 		PCAP::PCAP
 		LibXml2::LibXml2
 	)
+
+endif()
+
+if(${PCSX2_TARGET_ARCHITECTURES} MATCHES "armv7")
+	#ras pi needs this
+	target_link_libraries(PCSX2_FLAGS INTERFACE
+		atomic
+	)
 endif()
 
 ### Generate the resources files
@@ -1500,12 +1537,21 @@ endforeach()
 # additonal include directories
 target_include_directories(PCSX2_FLAGS INTERFACE
 	.
-	x86
 	${CMAKE_BINARY_DIR}/pcsx2
 	${CMAKE_BINARY_DIR}/common/include/
 	"${CMAKE_SOURCE_DIR}/3rdparty/jpgd/"
-	"${CMAKE_SOURCE_DIR}/3rdparty/xbyak/"
+	"${CMAKE_SOURCE_DIR}/3rdparty/sse2neon/"
 )
+if(${PCSX2_TARGET_ARCHITECTURES} MATCHES "i386" OR ${PCSX2_TARGET_ARCHITECTURES} MATCHES "x86_64")
+	target_include_directories(PCSX2 PRIVATE
+		x86
+		"${CMAKE_SOURCE_DIR}/3rdparty/xbyak/"
+	)
+else()
+	target_include_directories(PCSX2 PRIVATE
+		arm
+	)
+endif()
 
 if(COMMAND target_precompile_headers)
 	message("Using precompiled headers.")
@@ -1517,7 +1563,7 @@ if (APPLE)
 	# We have a bunch of page-sized arrays in bss that we use for jit
 	# Obviously not being able to make those arrays executable would be a problem
 	target_link_options(PCSX2 PRIVATE -Wl,-segprot,__DATA,rwx,rw)
-
+	
 	set_target_properties(PCSX2 PROPERTIES
 		MACOSX_BUNDLE true
 		MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/gui/Resources/Info.plist.in"

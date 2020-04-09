@@ -209,8 +209,9 @@ void SysCoreThread::_reset_stuff_as_needed()
 	{
 		SysClearExecutionCache();
 		memBindConditionalHandlers();
+#if defined(_M_X86)
 		SetCPUState(EmuConfig.Cpu.sseMXCSR, EmuConfig.Cpu.sseVUMXCSR);
-
+#endif
 		m_resetRecompilers = false;
 		m_resetProfilers = false;
 	}
@@ -298,9 +299,9 @@ void SysCoreThread::ExecuteTaskInThread()
 {
 	Threading::EnableHiresScheduler(); // Note that *something* in SPU2 and GS also set the timer resolution to 1ms.
 	m_sem_event.WaitWithoutYield();
-
+#if defined(_M_X86)
 	m_mxcsr_saved.bitmask = _mm_getcsr();
-
+#endif
 	PCSX2_PAGEFAULT_PROTECT
 	{
 		while (true)
@@ -359,8 +360,9 @@ void SysCoreThread::OnCleanupInThread()
 	PADshutdown();
 	DEV9shutdown();
 	GetMTGS().Cancel();
-
+#if defined(_M_X86)
 	_mm_setcsr(m_mxcsr_saved.bitmask);
+#endif
 	Threading::DisableHiresScheduler();
 	_parent::OnCleanupInThread();
 

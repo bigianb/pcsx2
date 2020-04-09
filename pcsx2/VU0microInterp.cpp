@@ -265,8 +265,9 @@ void InterpVU0::Step()
 void InterpVU0::Execute(u32 cycles)
 {
 	const int originalRounding = fegetround();
+#if defined(_M_X86)
 	fesetround(g_sseVUMXCSR.RoundingControl << 8);
-
+#endif
 	VU0.VI[REG_TPC].UL <<= 3;
 	VU0.flags &= ~VUFLAG_MFLAGSET;
 	u32 startcycles = VU0.cycle;

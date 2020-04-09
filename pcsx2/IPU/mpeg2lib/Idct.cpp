@@ -32,6 +32,10 @@
 #include "IPU/IPU.h"
 #include "Mpeg.h"
 
+#if !defined(_M_X86)
+#include "sse2neon.h"
+#endif
+
 #define W1 2841 /* 2048*sqrt (2)*cos (1*pi/16) */
 #define W2 2676 /* 2048*sqrt (2)*cos (2*pi/16) */
 #define W3 2408 /* 2048*sqrt (2)*cos (3*pi/16) */

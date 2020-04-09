@@ -1,4 +1,12 @@
-foreach(isa "sse4" "avx" "avx2")
+if (_M_X86)
+	set(isalist "sse4" "avx" "avx2")
+else()
+	set(isalist "neon")
+	set(native_vector_isa 100)
+	set(isa_number_neon 1)
+endif()
+
+foreach(isa ${isalist})
 	set(GSDir ${CMAKE_SOURCE_DIR}/pcsx2/GS)
 
 	if(${native_vector_isa} LESS ${isa_number_${isa}})
@@ -31,3 +39,22 @@ foreach(isa "sse4" "avx" "avx2")
 		)
 	endif()
 endforeach()
+
+add_pcsx2_test(vector_test
+		vector_test.cpp
+		${GSDir}/GSVector.h
+		)
+
+	target_include_directories(vector_test PRIVATE ${GSDir} ${CMAKE_SOURCE_DIR}/pcsx2/ ${CMAKE_SOURCE_DIR}/pcsx2/gui)
+	if(WIN32)
+		target_include_directories(vector_test PRIVATE ${CMAKE_SOURCE_DIR}/3rdparty)
+	endif()
+
+	if(WIN32)
+		target_compile_definitions(vector_test PRIVATE
+			_M_SSE=0x401
+			WINVER=0x0603
+			_WIN32_WINNT=0x0603
+			WIN32_LEAN_AND_MEAN
+		)
+	endif()

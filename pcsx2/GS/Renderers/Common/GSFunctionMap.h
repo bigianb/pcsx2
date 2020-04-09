@@ -21,7 +21,9 @@
 #include "GS/Renderers/SW/GSScanlineEnvironment.h"
 #include "common/emitter/tools.h"
 
+#if defined (_M_X86)
 #include <xbyak/xbyak_util.h>
+#endif
 
 template <class KEY, class VALUE>
 class GSFunctionMap
@@ -101,6 +103,7 @@ public:
 
 	virtual void PrintStats()
 	{
+#if defined(_M_X86)
 		uint64 totalTicks = 0;
 
 		for (const auto& i : m_map_active)
@@ -142,9 +145,12 @@ public:
 					(double)((p->total - p->actual) * 100) / p->total);
 			}
 		}
+#endif
 	}
+
 };
 
+#if defined (_M_X86)
 class GSCodeGenerator : public Xbyak::CodeGenerator
 {
 protected:
@@ -156,6 +162,21 @@ public:
 	{
 	}
 };
+#else
+// TODO: ARM
+class GSCodeGenerator
+{
+protected:
+
+public:
+	GSCodeGenerator(void* code, size_t maxsize)
+	{
+	}
+
+	int getSize() { return 0; }
+	const uint8 *getCode() const { return nullptr; }
+};
+#endif
 
 template <class CG, class KEY, class VALUE>
 class GSCodeGeneratorFunctionMap : public GSFunctionMap<KEY, VALUE>

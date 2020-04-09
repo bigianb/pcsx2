@@ -490,9 +490,11 @@ namespace Implementations
 
 	void Cpu_DumpRegisters()
 	{
+#if defined(_M_X86)
 #ifdef PCSX2_DEVBUILD
 		iDumpRegisters(cpuRegs.pc, 0);
 		Console.Warning("hardware registers dumped EE:%x, IOP:%x\n", cpuRegs.pc, psxRegs.pc);
+#endif
 #endif
 	}
 

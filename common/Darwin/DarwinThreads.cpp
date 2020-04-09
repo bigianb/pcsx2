@@ -36,9 +36,11 @@ __forceinline void Threading::Sleep(int ms)
 // improve performance and reduce cpu power consumption.
 __forceinline void Threading::SpinWait()
 {
-	// If this doesn't compile you can just comment it out (it only serves as a
-	// performance hint and isn't required).
-	__asm__("pause");
+    // If this doesn't compile you can just comment it out (it only serves as a
+    // performance hint and isn't required).
+#if defined(_M_X86)
+    __asm__("pause");
+#endif
 }
 
 __forceinline void Threading::EnableHiresScheduler()

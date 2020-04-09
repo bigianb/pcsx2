@@ -106,6 +106,7 @@ extern void vmfree(void* ptr, size_t size);
 #define ASSERT assert
 
 // sse
+#if defined(_M_X86)
 #if defined(__GNUC__)
 
 	// Convert gcc see define into GS (windows) define
@@ -123,4 +124,5 @@ extern void vmfree(void* ptr, size_t size);
 
 	#error PCSX2 requires compiling for at least SSE 4.1
 
+#endif
 #endif

@@ -35,19 +35,6 @@ target_sources(common PRIVATE
 	StringUtil.cpp
 	ThreadTools.cpp
 	WindowInfo.cpp
-	emitter/bmi.cpp
-	emitter/cpudetect.cpp
-	emitter/fpu.cpp
-	emitter/groups.cpp
-	emitter/jmp.cpp
-	emitter/legacy.cpp
-	emitter/legacy_sse.cpp
-	emitter/movs.cpp
-	emitter/simd.cpp
-	emitter/LnxCpuDetect.cpp
-	emitter/WinCpuDetect.cpp
-	emitter/x86emitter.cpp
-	x86/MemcpyFast.cpp
 	Darwin/DarwinThreads.cpp
 	Darwin/DarwinMisc.cpp
 	Darwin/DarwinSemaphore.cpp
@@ -92,6 +79,26 @@ target_sources(common PRIVATE
 	TraceLog.h
 	WindowInfo.h
 	wxBaseTools.h
+	)
+
+if(${PCSX2_TARGET_ARCHITECTURES} MATCHES "i386" OR ${PCSX2_TARGET_ARCHITECTURES} MATCHES "x86_64")
+target_sources(common PRIVATE
+	emitter/bmi.cpp
+	emitter/cpudetect.cpp
+	emitter/fpu.cpp
+	emitter/groups.cpp
+	emitter/jmp.cpp
+	emitter/legacy.cpp
+	emitter/legacy_sse.cpp
+	emitter/movs.cpp
+	emitter/simd.cpp
+	emitter/LnxCpuDetect.cpp
+	emitter/WinCpuDetect.cpp
+	emitter/x86emitter.cpp
+	x86/MemcpyFast.cpp
+)
+
+target_sources(common PRIVATE
 	emitter/cpudetect_internal.h
 	emitter/implement/dwshift.h
 	emitter/implement/group1.h
@@ -117,7 +124,8 @@ target_sources(common PRIVATE
 	emitter/tools.h
 	emitter/x86emitter.h
 	emitter/x86types.h
-	)
+)
+endif()
 
 if(USE_VTUNE)
 	target_link_libraries(common PUBLIC Vtune::Vtune)
@@ -172,7 +180,7 @@ endif()
 
 target_link_libraries(common PRIVATE ${LIBC_LIBRARIES} PUBLIC wxWidgets::all glad)
 target_compile_features(common PUBLIC cxx_std_17)
-target_include_directories(common PUBLIC ../3rdparty/include ../)
+target_include_directories(common PUBLIC ../3rdparty/include ../ ../3rdparty/sse2neon)
 target_compile_definitions(common PUBLIC "${PCSX2_DEFS}")
 target_compile_options(common PRIVATE "${PCSX2_WARNINGS}")
 

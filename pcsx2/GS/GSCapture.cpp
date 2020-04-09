@@ -524,7 +524,7 @@ bool GSCapture::BeginCapture(float fps, GSVector2i recommendedResolution, float 
 	m_capturing = true;
 	filename = convert_utf16_to_utf8(dlg.m_filename.erase(dlg.m_filename.length() - 3, 3) + L"wav");
 	return true;
-#elif defined(__unix__)
+#elif defined(__unix__) || defined(__APPLE__)
 	// Note I think it doesn't support multiple depth creation
 	GSmkdir(m_out_dir.c_str());
 
@@ -565,7 +565,7 @@ bool GSCapture::DeliverFrame(const void* bits, int pitch, bool rgba)
 		return true;
 	}
 
-#elif defined(__unix__)
+#elif defined(__unix__) || defined(__APPLE__)
 
 	std::string out_file = m_out_dir + format("/frame.%010d.png", m_frame);
 	//GSPng::Save(GSPng::RGB_PNG, out_file, (uint8*)bits, m_size.x, m_size.y, pitch, m_compression_level);
@@ -599,7 +599,7 @@ bool GSCapture::EndCapture()
 		m_graph.reset();;
 	}
 
-#elif defined(__unix__)
+#elif defined(__unix__) || defined(__APPLE__)
 	m_workers.clear();
 
 	m_frame = 0;

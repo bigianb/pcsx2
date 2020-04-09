@@ -19,6 +19,7 @@
 #include "GS/Renderers/Common/GSFunctionMap.h"
 #include "GS/GSUtil.h"
 
+#if defined (_M_X86)
 class GSSetupPrimCodeGenerator : public GSCodeGenerator
 {
 	void operator=(const GSSetupPrimCodeGenerator&);
@@ -35,3 +36,11 @@ class GSSetupPrimCodeGenerator : public GSCodeGenerator
 public:
 	GSSetupPrimCodeGenerator(void* param, uint64 key, void* code, size_t maxsize);
 };
+
+#else // ARM
+class GSSetupPrimCodeGenerator : public GSCodeGenerator
+{
+public:
+	GSSetupPrimCodeGenerator(void* param, uint64 key, void* code, size_t maxsize)  : GSCodeGenerator(code, maxsize) {}
+};
+#endif

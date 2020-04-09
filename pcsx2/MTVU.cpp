@@ -46,10 +46,15 @@ static void MTVU_Unpack(void* data, VIFregisters& vifRegs)
 {
 	u16 wl = vifRegs.cycle.wl > 0 ? vifRegs.cycle.wl : 256;
 	bool isFill = vifRegs.cycle.cl < wl;
+#if defined(_M_X86)
 	if (newVifDynaRec)
 		dVifUnpack<1>((u8*)data, isFill);
 	else
 		_nVifUnpack(1, (u8*)data, vifRegs.mode, isFill);
+#else
+    // no dynarec on arm
+    _nVifUnpack(1, (u8*)data, vifRegs.mode, isFill);
+#endif
 }
 
 // Called on Saving/Loading states...

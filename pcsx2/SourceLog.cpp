@@ -31,7 +31,9 @@
 #include <ctype.h>
 
 #include "R3000A.h"
+#if defined(_M_X86)
 #include "iR5900.h"
+#endif
 #include "System.h"
 #include "DebugTools/Debug.h"
 
@@ -73,7 +75,10 @@ void SysTraceLog::DoWrite(const char* msg) const
 
 void SysTraceLog_EE::ApplyPrefix(FastFormatAscii& ascii) const
 {
+#if defined(_M_X86)
+// TODO: FIXME ARM
 	ascii.Write("%-4s(%8.8lx %8.8lx): ", ((SysTraceLogDescriptor*)m_Descriptor)->Prefix, cpuRegs.pc, cpuRegs.cycle);
+#endif
 }
 
 void SysTraceLog_IOP::ApplyPrefix(FastFormatAscii& ascii) const

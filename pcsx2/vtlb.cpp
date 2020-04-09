@@ -765,9 +765,10 @@ void vtlb_Init()
 	// The LUT is only used for 1 game so we allocate it only when the gamefix is enabled (save 4MB)
 	if (EmuConfig.Gamefixes.GoemonTlbHack)
 		vtlb_Alloc_Ppmap();
-
+#if defined(_M_X86)
 	extern void vtlb_dynarec_init();
 	vtlb_dynarec_init();
+#endif
 }
 
 // vtlb_Reset -- Performs a COP0-level reset of the PS2's TLB.

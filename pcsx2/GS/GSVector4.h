@@ -31,7 +31,9 @@ class alignas(16) GSVector4
 
 	constexpr static __m128 cxpr_setr_epi32(int x, int y, int z, int w)
 	{
-#ifdef __GNUC__
+#if defined(__aarch64__) || defined(__arm__)
+		return (__m128) float32x4_t{static_cast<float32_t>(x), static_cast<float32_t>(y), static_cast<float32_t>(z), static_cast<float32_t>(w)};
+#elif defined(__GNUC__)
 		return (__m128)(__v4si{x, y, z, w});
 #else
 		__m128 m = {};

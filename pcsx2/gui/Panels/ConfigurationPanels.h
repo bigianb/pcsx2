@@ -141,7 +141,9 @@ namespace Panels
 
 	protected:
 		void OnRestoreDefaults(wxCommandEvent& evt);
+#if defined(_M_X86)
 		void ApplyRoundmode(SSE_MXCSR& mxcsr);
+#endif
 	};
 
 	// --------------------------------------------------------------------------------------

@@ -21,6 +21,10 @@
 #include "yuv2rgb.h"
 #include "mpeg2lib/Mpeg.h"
 
+#if !defined(_M_X86)
+#include "sse2neon.h"
+#endif
+
 void ipu_dither_reference(const macroblock_rgb32 &rgb32, macroblock_rgb16 &rgb16, int dte);
 void ipu_dither_sse2(const macroblock_rgb32 &rgb32, macroblock_rgb16 &rgb16, int dte);
 

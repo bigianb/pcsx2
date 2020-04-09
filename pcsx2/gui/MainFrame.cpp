@@ -97,8 +97,12 @@ void MainEmuFrame::UpdateStatusBar()
 
 #ifdef __M_X86_64
 	m_statusbar.SetStatusText("x64", 3);
-#else
+#elif defined(__aarch64__)
+    m_statusbar.SetStatusText("arm64", 3);
+#elif defined(_M_X86)
 	m_statusbar.SetStatusText("x32", 3);
+#else
+    m_statusbar.SetStatusText("arm", 3);
 #endif
 }
 

@@ -986,7 +986,7 @@ void GSRendererHW::SwSpriteRender()
 			if (m_env.COLCLAMP.CLAMP)
 				dc = dc.clamp8(); // clamp(dc, 0, 255)
 			else
-				dc = dc.sll16(8).srl16(8); // Mask, lower 8 bits enabled per channel
+				dc = dc.sll16<8>().srl16(8); // Mask, lower 8 bits enabled per channel
 
 			// No Alpha Correction
 			ASSERT(m_context->FBA.FBA == 0);

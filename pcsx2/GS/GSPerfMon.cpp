@@ -17,6 +17,39 @@
 #include "GSPerfMon.h"
 #include "GS_types.h"
 
+#if !defined(_M_X86)
+#define __rdtsc getCycles 
+
+#if defined (__aarch64__)
+unsigned long long getCycles()
+{
+	unsigned long long result;
+	__asm __volatile("mrs %0, CNTVCT_EL0" : "=&r" (result)); 
+	return result;
+}
+#else
+unsigned long long getCycles()
+{
+	return 1;
+#if 0    // SIGILL on RPI 
+volatile unsigned cc;
+static int init = 0;
+if(!init) {
+  __asm__ __volatile__ ("mcr p15, 0, %0, c9, c12, 2" :: "r"(1<<31)); /* stop the cc */
+  __asm__ __volatile__ ("mcr p15, 0, %0, c9, c12, 0" :: "r"(5));     /* initialize */
+  __asm__ __volatile__ ("mcr p15, 0, %0, c9, c12, 1" :: "r"(1<<31)); /* start the cc */
+  init = 1;
+}
+__asm__ __volatile__ ("mrc p15, 0, %0, c9, c13, 0" : "=r"(cc));
+return cc;
+#endif
+}
+#endif
+
+
+#endif
+
+
 GSPerfMon::GSPerfMon()
 	: m_frame(0)
 	, m_lastframe(0)

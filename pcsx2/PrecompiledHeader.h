@@ -75,7 +75,9 @@
 #include "common/Console.h"
 #include "common/MemcpyFast.h"
 #include "common/General.h"
+#if defined(_M_X86)
 #include "common/emitter/tools.h"
+#endif
 
 #include "Config.h"
 

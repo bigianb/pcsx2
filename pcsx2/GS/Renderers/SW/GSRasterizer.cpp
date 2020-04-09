@@ -19,6 +19,22 @@
 #include "GSRasterizer.h"
 #include "common/General.h"
 
+#if !defined(_M_X86)
+#ifdef __clang__
+// Apple M1 for example
+#define __rdtsc __builtin_readcyclecounter
+#else
+// Raspberry pi for example
+#include <time.h>
+static inline uint64_t linux_gcc_rdtsc() {
+	struct timespec ts = {0, 0};
+	timespec_get(&ts, TIME_UTC);
+	return (uint64_t)(ts.tv_sec) * 1000000000 + ts.tv_nsec;
+}
+#define __rdtsc linux_gcc_rdtsc
+#endif
+#endif
+
 int GSRasterizerData::s_counter = 0;
 
 static int compute_best_thread_height(int threads)

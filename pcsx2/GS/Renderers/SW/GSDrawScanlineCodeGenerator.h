@@ -25,6 +25,8 @@
 #define RegLong Xbyak::Reg32
 #endif
 
+#if defined (_M_X86)
+
 class GSDrawScanlineCodeGenerator : public GSCodeGenerator
 {
 	void operator=(const GSDrawScanlineCodeGenerator&);
@@ -36,3 +38,13 @@ class GSDrawScanlineCodeGenerator : public GSCodeGenerator
 public:
 	GSDrawScanlineCodeGenerator(void* param, uint64 key, void* code, size_t maxsize);
 };
+
+#else
+// TODO: ARM
+class GSDrawScanlineCodeGenerator : public GSCodeGenerator
+{
+public:
+	GSDrawScanlineCodeGenerator(void* param, uint64 key, void* code, size_t maxsize) : GSCodeGenerator(code, maxsize) {}
+};
+
+#endif

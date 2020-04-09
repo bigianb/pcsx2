@@ -19,7 +19,9 @@
 #include "GS.h"
 #include "Gif_Unit.h"
 #include "VUmicro.h"
+#if defined(_M_X86)
 #include "newVif.h"
+#endif
 #include "MTVU.h"
 
 u32 g_vif1Cycles = 0;
