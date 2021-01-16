@@ -43,8 +43,21 @@ mem32_t __fastcall _hwRead32(u32 mem)
 	switch( page )
 	{
 		case 0x00:	return rcntRead32<0x00>( mem );
-		case 0x01:	return rcntRead32<0x01>( mem );
-		
+		case 0x01:
+		{
+			if (0x10001900 == mem)
+			{
+				return (mem32_t)clock();
+			}
+			else if (0x10001904 == mem)
+			{
+				return CLOCKS_PER_SEC;
+			}
+			else
+			{
+				return rcntRead32<0x01>(mem);
+			}
+		}
 		case 0x02:	return ipuRead32( mem );
 
 		case 0x03:
