@@ -982,6 +982,10 @@ u8 sioRead8()
 
 	if(sio.StatReg & RX_RDY)
 	{
+        if (sio.bufCount > sio.bufSize){
+            // FIXME: IJB
+            sio.bufCount = sio.bufSize;
+        }
 		ret = sio.buf[sio.bufCount];
 		if(sio.bufCount == sio.bufSize) SIO_STAT_EMPTY();
 		sio.bufCount++;
