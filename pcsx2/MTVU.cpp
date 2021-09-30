@@ -432,13 +432,15 @@ bool VU_Thread::IsDone()
 
 void VU_Thread::WaitVU()
 {
+    if (!THREAD_VU1){
+        return;
+    }
 	MTVU_LOG("MTVU - WaitVU!");
 	for (;;)
 	{
 		if (IsDone())
 			break;
 		//DevCon.WriteLn("WaitVU()");
-		//pxAssert(THREAD_VU1);
 		KickStart();
 		std::this_thread::yield(); // Give a chance to the MTVU thread to actually start
 		ScopedLock lock(mtxBusy);
