@@ -57,8 +57,8 @@ IsoDirectory::IsoDirectory(SectorSource& r)
 	while (!done)
 	{
 		u8 sector[2048];
-		internalReader.readSector(sector, i);
-		if (memcmp(&sector[1], "CD001", 5) == 0)
+        sector[1] = 0;
+		if (internalReader.readSector(sector, i) && memcmp(&sector[1], "CD001", 5) == 0)
 		{
 			switch (sector[0])
 			{
