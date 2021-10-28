@@ -898,6 +898,14 @@ else(WIN32)
 	)
 endif(WIN32)
 
+if(Vulkan_FOUND)
+	list(APPEND pcsx2GSSources
+
+	)
+	list(APPEND pcsx2GSHeaders
+
+	)
+endif()
 
 # DebugTools sources
 set(pcsx2DebugToolsSources
@@ -1499,6 +1507,13 @@ else()
 		LibXml2::LibXml2
 	)
 
+endif()
+
+if(Vulkan_FOUND)
+	target_link_libraries(PCSX2_FLAGS INTERFACE
+		Vulkan::Vulkan
+	)
+	list(APPEND PCSX2_DEFS ENABLE_VULKAN)
 endif()
 
 if(${PCSX2_TARGET_ARCHITECTURES} MATCHES "armv7")

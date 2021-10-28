@@ -270,3 +270,4 @@ else()
 endif()
 
 add_subdirectory(3rdparty/glad EXCLUDE_FROM_ALL)
+find_package(Vulkan)

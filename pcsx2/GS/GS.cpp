@@ -1118,6 +1118,10 @@ void GSApp::Init()
 	m_gs_renderers.push_back(GSSetting(static_cast<uint32>(GSRendererType::OGL_SW), "Software", ""));
 #endif
 
+#ifdef ENABLE_VULKAN
+	m_gs_renderers.push_back(GSSetting(static_cast<uint32>(GSRendererType::VULKAN_HW), "Vulkan", ""));
+#endif
+
 	// The null renderer goes third, it has use for benchmarking purposes in a release build
 	m_gs_renderers.push_back(GSSetting(static_cast<uint32>(GSRendererType::Null), "Null", ""));
 
