@@ -27,7 +27,6 @@ const unsigned int s_mipmap_nb = 3;
 
 GSRenderer::GSRenderer()
 	: m_shader(0)
-    , m_f8_key(false)
 	, m_shift_key(false)
 	, m_control_key(false)
 	, m_texture_shuffle(false)
