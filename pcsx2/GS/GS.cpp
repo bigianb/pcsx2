@@ -14,6 +14,7 @@
  */
 
 #include "PrecompiledHeader.h"
+#include "GS/Window/GSwxDialog.h"
 #include "GS.h"
 #include "GSUtil.h"
 #include "Renderers/SW/GSRendererSW.h"
@@ -30,19 +31,10 @@
 
 #include "Renderers/DX11/GSRendererDX11.h"
 #include "Renderers/DX11/GSDevice11.h"
-#include "Window/GSSettingsDlg.h"
+#include "GS/Renderers/DX11/D3D.h"
 
 
 static HRESULT s_hr = E_FAIL;
-
-#else
-
-#ifdef __APPLE__
-#include <gtk/gtk.h>
-#include <CoreFoundation/CoreFoundation.h>
-#endif
-
-extern bool RunLinuxDialog();
 
 #endif
 
@@ -158,7 +150,12 @@ int _GSopen(const WindowInfo& wi, const char* title, GSRendererType renderer, in
 		renderer = static_cast<GSRendererType>(theApp.GetConfigI("Renderer"));
 #ifdef _WIN32
 		if (renderer == GSRendererType::Default)
-			renderer = GSUtil::GetBestRenderer();
+		{
+			if (D3D::ShouldPreferD3D())
+				renderer = GSRendererType::DX1011_HW;
+			else
+				renderer = GSRendererType::OGL_HW;
+		}
 #endif
 	}
 
@@ -308,7 +305,12 @@ int GSopen2(const WindowInfo& wi, uint32 flags)
 				const auto config_renderer = static_cast<GSRendererType>(theApp.GetConfigI("Renderer"));
 
 				if (current_renderer == config_renderer)
-					current_renderer = GSUtil::GetBestRenderer();
+				{
+					if (D3D::ShouldPreferD3D())
+						current_renderer = GSRendererType::DX1011_HW;
+					else
+						current_renderer = GSRendererType::OGL_HW;
+				}
 				else
 					current_renderer = config_renderer;
 			}
@@ -565,39 +567,12 @@ void GSconfigure()
 		theApp.SetConfigDir();
 		theApp.Init();
 
-#ifdef _WIN32
-		GSDialog::InitCommonControls();
-		if (GSSettingsDlg().DoModal() == IDOK)
-		{
-			// Force a reload of the gs state
-			theApp.SetCurrentRendererType(GSRendererType::Undefined);
-		}
-
-#elif defined(__APPLE__)
-		// Rest of macOS UI doesn't use GTK so we need to init it now
-		gtk_init(nullptr, nullptr);
-		// GTK expects us to be using its event loop, rather than Cocoa's
-		// If we call its stuff right now, it'll attempt to drain a static autorelease pool that was already drained by Cocoa (see https://github.com/GNOME/gtk/blob/8c1072fad1cb6a2e292fce2441b4a571f173ce0f/gdk/quartz/gdkeventloop-quartz.c#L640-L646)
-		// We can convince it that touching that pool would be unsafe by running all GTK calls within a CFRunLoop
-		// (Blocks submitted to the main queue by dispatch_async are run by its CFRunLoop)
-		dispatch_async(dispatch_get_main_queue(), ^{
-		  if (RunLinuxDialog())
-		  {
-			  theApp.ReloadConfig();
-			  // Force a reload of the gs state
-			  theApp.SetCurrentRendererType(GSRendererType::Undefined);
-		  }
-		});
-#else
-
-		if (RunLinuxDialog())
+		if (RunwxDialog())
 		{
 			theApp.ReloadConfig();
 			// Force a reload of the gs state
 			theApp.SetCurrentRendererType(GSRendererType::Undefined);
 		}
-
-#endif
 	}
 	catch (GSRecoverableError)
 	{
@@ -1215,9 +1190,10 @@ void GSApp::Init()
 	// Avoid to clutter the ini file with useless options
 #ifdef _WIN32
 	// Per OS option.
-	m_default_configuration["Adapter"]                                    = "default";
+	m_default_configuration["adapter_index"]                              = "0";
 	m_default_configuration["CaptureFileName"]                            = "";
 	m_default_configuration["CaptureVideoCodecDisplayName"]               = "";
+	m_default_configuration["debug_d3d"]                                  = "0";
 	m_default_configuration["dx_break_on_severity"]                       = "0";
 	// D3D Blending option
 	m_default_configuration["accurate_blending_unit_d3d11"]               = "1";

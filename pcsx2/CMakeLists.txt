@@ -648,6 +648,7 @@ set(pcsx2GSSources
 	GS/Renderers/OpenGL/GSTextureCacheOGL.cpp
 	GS/Renderers/OpenGL/GSTextureOGL.cpp
 	GS/Window/GSSetting.cpp
+	GS/Window/GSwxDialog.cpp
 	)
 
 if(${PCSX2_TARGET_ARCHITECTURES} MATCHES "i386" OR ${PCSX2_TARGET_ARCHITECTURES} MATCHES "x86_64")
@@ -727,7 +728,7 @@ set(pcsx2GSHeaders
 	GS/Window/GSCaptureDlg.h
 	GS/Window/GSDialog.h
 	GS/Window/GSSetting.h
-	GS/Window/GSSettingsDlg.h
+	GS/Window/GSwxDialog.h
 	)
 
 if(WIN32)
@@ -792,6 +793,7 @@ if(WIN32)
 	)
 
 	list(APPEND pcsx2GSSources
+		GS/Renderers/DX11/D3D.cpp
 		GS/Renderers/DX11/GSDevice11.cpp
 		GS/Renderers/DX11/GSRendererDX11.cpp
 		GS/Renderers/DX11/GSTexture11.cpp
@@ -799,9 +801,9 @@ if(WIN32)
 		GS/Renderers/DX11/GSTextureFX11.cpp
 		GS/Window/GSCaptureDlg.cpp
 		GS/Window/GSDialog.cpp
-		GS/Window/GSSettingsDlg.cpp
 	)
 	list(APPEND pcsx2GSHeaders
+		GS/Renderers/DX11/D3D.h
 		GS/Renderers/DX11/GSDevice11.h
 		GS/Renderers/DX11/GSRendererDX11.h
 		GS/Renderers/DX11/GSTexture11.h
@@ -890,7 +892,6 @@ else(WIN32)
 
 	list(APPEND pcsx2GSSources
 		GS/GS_res.cpp
-		GS/Window/GSLinuxDialog.cpp
 	)
 
 	list(APPEND pcsx2GSHeaders
@@ -973,6 +974,7 @@ set(pcsx2GuiSources
 	gui/Debugger/CtrlDisassemblyView.cpp
 	gui/Debugger/CtrlRegisterList.cpp
 	gui/Debugger/CtrlMemView.cpp
+	gui/Debugger/CtrlMemSearch.cpp
 	gui/Debugger/DebuggerLists.cpp
 	gui/Debugger/DisassemblyDialog.cpp
 	gui/Debugger/DebugEvents.cpp
@@ -1032,6 +1034,7 @@ set(pcsx2GuiHeaders
 	gui/Debugger/BreakpointWindow.h
 	gui/Debugger/CtrlDisassemblyView.h
 	gui/Debugger/CtrlMemView.h
+	gui/Debugger/CtrlMemSearch.h
 	gui/Debugger/CtrlRegisterList.h
 	gui/Debugger/DebugEvents.h
 	gui/Debugger/DebuggerLists.h
